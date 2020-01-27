@@ -7,7 +7,8 @@
 # 2. Go to https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/vivado-design-tools.html
 # 3. Download "All OS installer Single-File Download" (.tar.gz) - WARNING: This file is about 19GB in size
 # 4. Place the .tar.gz in the same directory as the PKGBUILD
-# 5. Build!
+# 5. (Optional) Adjust install_config.txt to your needs if you don't want a default install and update the md5sums
+# 6. Build!
 #
 # No refunds for broken AUR helpers, just use make(chroot)pkg.
 #
@@ -44,6 +45,7 @@ depends=('ncurses5-compat-libs'
 
 source=("file:///Xilinx_Vivado_SDK_${pkgver}_${_more_ver}.tar.gz"
         'spoof_homedir.c'
+        'install_config.txt'
         'Xilinx-VivadoIDE.desktop'
         'Xilinx-SDK.desktop'
         'Xilinx-DocNav.desktop')
@@ -51,6 +53,7 @@ source=("file:///Xilinx_Vivado_SDK_${pkgver}_${_more_ver}.tar.gz"
 # checksum from https://www.xilinx.com/support/download.html
 md5sums=('8a3a75f26d0e20de21fc673ad9d40d0f'
          '69d14ad64f6ec44e041eaa8ffcb6f87c'
+         '28b4b3d76b49cef056bc404a3ececc3d'
          'b7cad6d39ef5293d4f433b8c9959f486'
          '44bb51e1c8832f001cb7d21b90cb5796'
          '4d37975f586923ad02a50056ff569703')
@@ -74,6 +77,8 @@ package() {
 
 	# LD_PRELOAD already contains libfakeroot.so, add our own library before that
 	LD_PRELOAD="$srcdir/spoof_homedir.so:$LD_PRELOAD" ./xsetup \
+		-optimize_diskspace \
+		--config $srcdir/install_config.txt \
 		--batch Install \
 		--agree XilinxEULA,3rdPartyEULA,WebTalkTerms \
 		--edition 'Vivado HL WebPACK' \
